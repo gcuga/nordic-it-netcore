@@ -122,17 +122,17 @@ namespace L03_HomeWork
             }
         }
 
-        public static T[,] TableCopy<T>(T[,] fromTable)
+        public static T[,] TableCopy<T>(T[,] tableFrom)
         {
-            T[,] toTable = new T[fromTable.GetLength(0), fromTable.GetLength(1)];
-            for (int i = 0; i < fromTable.GetLength(0); i++)
+            T[,] tableTo = new T[tableFrom.GetLength(0), tableFrom.GetLength(1)];
+            for (int i = 0; i < tableFrom.GetLength(0); i++)
             {
-                for (int j = 0; j < fromTable.GetLength(1); j++)
+                for (int j = 0; j < tableFrom.GetLength(1); j++)
                 {
-                    toTable[i, j] = fromTable[i, j];
+                    tableTo[i, j] = tableFrom[i, j];
                 }
             }
-            return toTable;
+            return tableTo;
         }
 
         public void PrintTable()

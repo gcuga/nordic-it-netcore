@@ -20,7 +20,7 @@ namespace L11HW
             Console.WriteLine();
 
             Console.WriteLine("Delay 3 seconds");
-            //Thread.Sleep(3000);
+            Thread.Sleep(3000);
 
             reminderItem1.AlarmMessage = null;
             reminderItem1.WriteProperties();
@@ -29,10 +29,10 @@ namespace L11HW
             Console.WriteLine($"Total reminders: {ReminderItem.ReminderCount}");
             Console.WriteLine();
 
-            ReminderReflectionConsolePresenter.PrintMembers(reminderItem);
-
-
-
+            ReminderReflectionConsolePresenter.PrintType(reminderItem);
+            ReminderReflectionConsolePresenter.PrintFields(reminderItem);
+            ReminderReflectionConsolePresenter.PrintProperties(reminderItem);
+            ReminderReflectionConsolePresenter.PrintPropertiesValues(reminderItem);
             Console.WriteLine();
 
             Console.WriteLine("Press any key to exit.");

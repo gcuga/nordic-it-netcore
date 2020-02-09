@@ -89,6 +89,5 @@ namespace L11HW
             sb.Append($"{nameof(IsOutdated)} : {IsOutdated}");
             Console.WriteLine(sb.ToString());
         }
-
     }
 }

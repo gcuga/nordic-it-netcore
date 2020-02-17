@@ -12,9 +12,7 @@ namespace L13HW
 
         public string FullPath => FilePath + FileName;
 
-        public FileLogWriter() : this(GetDefaultPath(), "mydefault.log", CultureInfo.CurrentCulture)
-        {
-        }
+        public FileLogWriter() : this(GetDefaultPath(), "mydefault.log", CultureInfo.CurrentCulture) { }
 
         public FileLogWriter(string path, string fileName, CultureInfo logCultureInfo) : base(logCultureInfo)
         {

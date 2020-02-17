@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace L13HW
 {
-    class MultipleLogWriter : ILogWriter
+    class MultipleLogWriter : BaseAbstractLogWriter
     {
         public List <ILogWriter> LogWriters { get; set; }
 
@@ -12,22 +12,7 @@ namespace L13HW
             LogWriters = logWriters ?? throw new ArgumentNullException(nameof(logWriters));
         }
 
-        public void LogInfo(string message)
-        {
-            ForeachCallLogOperation(MessageTypes.Info, message);
-        }
-
-        public void LogWarning(string message)
-        {
-            ForeachCallLogOperation(MessageTypes.Warning, message);
-        }
-
-        public void LogError(string message)
-        {
-            ForeachCallLogOperation(MessageTypes.Error, message);
-        }
-
-        private void ForeachCallLogOperation(MessageTypes messageType, string message) 
+        protected override void WriteLogMessage(MessageTypes messageTypes, string message)
         {
             foreach (ILogWriter item in LogWriters)
             {
@@ -36,7 +21,7 @@ namespace L13HW
                     continue;
                 }
 
-                switch (messageType)
+                switch (messageTypes)
                 {
                     case MessageTypes.Info:
                         {

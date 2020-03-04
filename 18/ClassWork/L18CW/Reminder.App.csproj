@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Reminder.Storage.Core\Reminder.Storage.Core.csproj" />
+    <ProjectReference Include="..\Reminder.Storage.InMemory\Reminder.Storage.InMemory.csproj" />
+  </ItemGroup>
+
+</Project>

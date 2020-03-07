@@ -23,6 +23,7 @@ namespace Reminder.Storage.Core
         public int ReminderNumber { get; }
         public ReminderItemStatus Status { get; set; } = ReminderItemStatus.Awaiting;
 
+        public bool IsTimeToSend => TimeToAlarm <= TimeSpan.Zero;
 
         public TimeSpan TimeToAlarm
         {

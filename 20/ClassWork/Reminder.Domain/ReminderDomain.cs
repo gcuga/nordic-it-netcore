@@ -4,23 +4,35 @@ using System.Threading;
 using Reminder.Domain.EventArgs;
 using Reminder.Domain.Model;
 using Reminder.Storage.Core;
+using Reminder.Receiver.Core;
+using Reminder.Sender.Core;
+using Reminder.Parsing;
 
 namespace Reminder.Domain
 {
 	public class ReminderDomain
 	{
+		private IReminderReceiver _receiver;
 		private IReminderStorage _storage;
+		private IReminderSender _sender;
 
 		private Timer _awaitingRemindersCheckTimer;
 		private Timer _readyReminderSendTimer;
+
 
 		public event EventHandler<ReminderItemStatusChangedEventArgs> ReminderItemStatusChanged;
 		public event EventHandler<ReminderItemStatusChangedEventArgs> ReminderItemSendingSucceeded;
 		public event EventHandler<ReminderItemSendingFailedEventArgs> ReminderItemSendingFailed;
 
-		public ReminderDomain(IReminderStorage storage)
+		public ReminderDomain(
+			IReminderStorage storage,
+			IReminderReceiver receiver,
+			IReminderSender sender)
 		{
 			_storage = storage;
+			_receiver = receiver;
+			_sender = sender;
+			_receiver.MessageReceived += ReceiverOnMessageReceived;
 		}
 
 		public void Run()
@@ -36,6 +48,35 @@ namespace Reminder.Domain
 				null,
 				TimeSpan.Zero,
 				TimeSpan.FromSeconds(1.5));
+
+			_receiver.Run();
+		}
+
+		private void ReceiverOnMessageReceived(object sender, MessageReceivedEventArgs e)
+		{
+			// parsing of the e.Message to get
+			var parsedMessage = MessageParser.ParseMessage(e.Message);
+			if (parsedMessage == null)
+			{
+				// we can raise some MessageParsingFailed event
+				Console.WriteLine($"Parsing {e.Message} has failed");
+				return;
+			}
+
+			string alarmMessage = parsedMessage.Message;
+			DateTimeOffset alarmDate = parsedMessage.Date;
+
+			// adding new reminder item to the storage
+			var item = new ReminderItem(
+				Guid.NewGuid(),
+				e.ContactId,
+				alarmDate,
+				alarmMessage);
+
+			_storage.Add(item);
+
+			// send message that reminder item was added
+
 		}
 
 		private void CheckAwaitingReminders(object dummy)
@@ -71,6 +112,7 @@ namespace Reminder.Domain
 				try
 				{
 					// and try to send
+					_sender.Send(item.ContactId, item.Message);
 
 					item.Status = ReminderItemStatus.SuccessfullySent;
 

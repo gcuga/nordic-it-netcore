@@ -22,7 +22,9 @@ namespace Reminder.Domain.Tests
 			source.Status = ReminderItemStatus.ReadyToSend;
 			storage.Add(source);
 
-			ReminderDomain domain = new ReminderDomain(storage);
+
+
+			ReminderDomain domain = new ReminderDomain(storage, );
 			domain.ReminderItemSendingSucceeded += (
 				object sender,
 				ReminderItemStatusChangedEventArgs actual) =>

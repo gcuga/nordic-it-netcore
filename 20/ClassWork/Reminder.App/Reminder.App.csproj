@@ -7,6 +7,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reminder.Domain\Reminder.Domain.csproj" />
+    <ProjectReference Include="..\Reminder.Receiver.Core\Reminder.Receiver.Core.csproj" />
+    <ProjectReference Include="..\Reminder.Receiver.Telegram\Reminder.Receiver.Telegram.csproj" />
+    <ProjectReference Include="..\Reminder.Sender.Core\Reminder.Sender.Core.csproj" />
+    <ProjectReference Include="..\Reminder.Sender.Telegram\Reminder.Sender.Telegram.csproj" />
     <ProjectReference Include="..\Reminder.Storage.Core\Reminder.Storage.Core.csproj" />
     <ProjectReference Include="..\Reminder.Storage.InMemory\Reminder.Storage.InMemory.csproj" />
   </ItemGroup>

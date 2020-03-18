@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using L22CW01.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace L22CW01.Controllers
             return new JsonResult(CitiesStore);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCityById")]
         public IActionResult GetCity(int id)
         {
             var city = CitiesStore.Cities.FirstOrDefault(x => x.Id == id);
@@ -36,6 +37,20 @@ namespace L22CW01.Controllers
 
             // 404 Not Found
             return NotFound("404 Not Found");
+        }
+
+        [HttpPost]
+        public IActionResult AddCity([FromBody] City city)
+        {
+            if (CitiesStore.Cities.FirstOrDefault(
+                x => x.Id == city.Id || x.Name == city.Name) != null)
+            {
+                return Conflict();
+            }
+
+            CitiesStore.Cities.Add(city);
+
+            return CreatedAtRoute("GetCityById", new { id = city.Id }, city);
         }
     }
 }

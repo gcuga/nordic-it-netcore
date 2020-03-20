@@ -18,7 +18,7 @@ namespace L22CW01
             {
                 new City(1, "Moscow"),
                 new City(2, "Saint-Petersburg"),
-                new City(3,"Montreal")
+                new City(3, "Montreal")
             };
         }
     }

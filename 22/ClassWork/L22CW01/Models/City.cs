@@ -19,5 +19,16 @@ namespace L22CW01.Models
             Id = id;
             Name = name ?? throw new ArgumentNullException(nameof(name));
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is City city &&
+                   Id == city.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
+        }
     }
 }

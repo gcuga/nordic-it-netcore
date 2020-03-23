@@ -1,4 +1,4 @@
-﻿namespace L23_C01_asp_net_core_app.Data
+﻿namespace CitiesData.Core
 {
 	public class CityDto
 	{
@@ -7,7 +7,6 @@
 		public string Name { get; set; }
 
 		public string Description { get; set; }
-
 
 		public CityDto() { }
 

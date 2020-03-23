@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
-using L23_C01_asp_net_core_app.Models;
-using System.Globalization;
 using System.Reflection;
 
 namespace L23_C01_asp_net_core_app.Validation
@@ -25,13 +20,13 @@ namespace L23_C01_asp_net_core_app.Validation
             PropertyInfo otherPropertyInfo = validationContext.ObjectType.GetProperty(OtherProperty);
             if (otherPropertyInfo == null)
             {
-                return new ValidationResult($"{validationContext.MemberName} не существует");
+                return new ValidationResult($"Property: {validationContext.MemberName} not found");
             }
 
             object otherPropertyValue = otherPropertyInfo.GetValue(validationContext.ObjectInstance, null);
             if (Equals(value, otherPropertyValue))
             {
-                return new ValidationResult($"{validationContext.MemberName} должен отличаться от  {otherPropertyInfo.Name}");
+                return new ValidationResult($"{validationContext.MemberName} shouldn't be the same as {otherPropertyInfo.Name}");
             }
 
             return ValidationResult.Success;

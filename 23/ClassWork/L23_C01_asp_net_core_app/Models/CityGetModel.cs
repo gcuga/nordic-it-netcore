@@ -1,4 +1,4 @@
-﻿using L23_C01_asp_net_core_app.Data;
+﻿using CitiesData.Core;
 
 namespace L23_C01_asp_net_core_app.Models
 {

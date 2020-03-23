@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using CitiesData.Core;
+using System.Collections.Generic;
 
-namespace L23_C01_asp_net_core_app.Data
+namespace CitiesData.InMemory
 {
 	public class CitiesDataStore : ICitiesDataStore
 	{
-		//private static CitiesDataStore _store;
-
 		public List<CityDto> Cities { get; }
 
 		public CitiesDataStore()
@@ -17,13 +16,5 @@ namespace L23_C01_asp_net_core_app.Data
 				new CityDto(3, "New-York", "The city I would like to take a look at :)")
 			};
 		}
-
-		//public static CitiesDataStore GetInstance()
-		//{
-		//	if (_store == null)
-		//		_store = new CitiesDataStore();
-
-		//	return _store;
-		//}
 	}
 }

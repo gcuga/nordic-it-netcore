@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using L23_C01_asp_net_core_app.Data;
 using L23_C01_asp_net_core_app.Models;
+using CitiesData.Core;
 
 namespace L23_C01_asp_net_core_app.Controllers
 {
@@ -10,7 +10,7 @@ namespace L23_C01_asp_net_core_app.Controllers
 	[Route("cities")]
 	public class CitiesController : ControllerBase
 	{
-		private CitiesDataStore _store;
+		private ICitiesDataStore _store;
 
 		public CitiesController(ICitiesDataStore store)
 		{

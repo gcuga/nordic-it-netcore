@@ -2,15 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.2.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    <ProjectReference Include="..\CitiesData.Core\CitiesData.Core.csproj" />
+    <ProjectReference Include="..\CitiesData.InMemory\CitiesData.InMemory.csproj" />
   </ItemGroup>
 
 

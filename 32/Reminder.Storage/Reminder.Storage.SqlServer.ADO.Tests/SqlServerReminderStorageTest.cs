@@ -28,9 +28,9 @@ namespace Reminder.Storage.SqlServer.ADO.Tests
 		[TestInitialize]
 		public void TestInitialize()
 		{
-			//RunSqlScript(Resources.DatabaseSchema);
-			//RunSqlScript(Resources.DatabaseSPs);
-			//RunSqlScript(Resources.DatabaseVWs);
+			RunSqlScript(Resources.DatabaseSchema);
+			RunSqlScript(Resources.DatabaseSPs);
+			RunSqlScript(Resources.DatabaseVWs);
 		}
 
 		[TestMethod]
@@ -288,11 +288,61 @@ namespace Reminder.Storage.SqlServer.ADO.Tests
 			Assert.AreEqual(2, actual.Count);
 		}
 
+		[TestMethod]
+		public void Method_UpdateStatus_Should_Change_Status_For_Existing_Id()
+		{
+			using var connection = GetOpenedSqlConnection();
+			using SqlCommand command = connection.CreateCommand();
+			command.CommandType = CommandType.Text;
+			command.CommandText = @"DELETE [dbo].[ReminderItem]";
+			command.ExecuteNonQuery();
+			DateTimeOffset expectedNow = DateTimeOffset.Now;
+			command.CommandText =
+				@"INSERT INTO [dbo].[ReminderItem] ([Id],[ContactId],[TargetDate],[Message],[StatusId],[CreatedDate],[UpdatedDate])"
+				+ @" VALUES ('35DED3B6-7207-452E-B09C-75EA17F77693','usr',@now,'Msg',@status,SYSDATETIMEOFFSET(),SYSDATETIMEOFFSET())";
+			command.Parameters.Add("@now", SqlDbType.DateTimeOffset).Value = expectedNow;
+			command.Parameters.Add("@status", SqlDbType.TinyInt).Value = (byte)ReminderItemStatus.Awaiting;
+			command.ExecuteNonQuery();
 
+			IReminderStorage storage = new SqlServerReminderStorage(_connectionString);
+			storage.UpdateStatus(new Guid("35DED3B6-7207-452E-B09C-75EA17F77693"), ReminderItemStatus.Sent);
 
+			command.Parameters.Clear();
+			command.CommandText =
+				@"SELECT [StatusId] FROM [dbo].[ReminderItem]" +
+				@" WHERE [Id]='35DED3B6-7207-452E-B09C-75EA17F77693'";
+			var actualStatus = (ReminderItemStatus)((byte)command.ExecuteScalar());
 
+			Assert.AreEqual(ReminderItemStatus.Sent, actualStatus);
+		}
 
+		[TestMethod]
+		public void Method_UpdateStatus_Should_Not_Change_Status_For_Other_Id()
+		{
+			using var connection = GetOpenedSqlConnection();
+			using SqlCommand command = connection.CreateCommand();
+			command.CommandType = CommandType.Text;
+			command.CommandText = @"DELETE [dbo].[ReminderItem]";
+			command.ExecuteNonQuery();
+			DateTimeOffset expectedNow = DateTimeOffset.Now;
+			command.CommandText =
+				@"INSERT INTO [dbo].[ReminderItem] ([Id],[ContactId],[TargetDate],[Message],[StatusId],[CreatedDate],[UpdatedDate])"
+				+ @" VALUES ('35DED3B6-7207-452E-B09C-75EA17F77693','usr',@now,'Msg',@status,SYSDATETIMEOFFSET(),SYSDATETIMEOFFSET())";
+			command.Parameters.Add("@now", SqlDbType.DateTimeOffset).Value = expectedNow;
+			command.Parameters.Add("@status", SqlDbType.TinyInt).Value = (byte)ReminderItemStatus.Ready;
+			command.ExecuteNonQuery();
 
+			IReminderStorage storage = new SqlServerReminderStorage(_connectionString);
+			storage.UpdateStatus(new Guid("1CA09791-21E5-45B0-973A-86CDFBA7A2D3"), ReminderItemStatus.Sent);
+
+			command.Parameters.Clear();
+			command.CommandText =
+				@"SELECT [StatusId] FROM [dbo].[ReminderItem]" +
+				@" WHERE [Id]='35DED3B6-7207-452E-B09C-75EA17F77693'";
+			var actualStatus = (ReminderItemStatus)((byte)command.ExecuteScalar());
+
+			Assert.AreEqual(ReminderItemStatus.Ready, actualStatus);
+		}
 
 		private void RunSqlScript(string script)
 		{

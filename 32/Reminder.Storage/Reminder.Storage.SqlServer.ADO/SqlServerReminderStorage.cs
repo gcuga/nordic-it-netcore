@@ -45,7 +45,7 @@ namespace Reminder.Storage.SqlServer.ADO
 				_nameOfTargetDate + "," +
 				_nameOfMessage + "," +
 				_nameOfStatusId +
-				" FROM [dbo].[ReminderItem] WHERE [Id] = @id";
+				" FROM [dbo].[VW_ReminderItem] WHERE [Id] = @id";
 			command.Parameters.AddWithValue("@id", SqlDbType.UniqueIdentifier).Value = id;
 			using var reader = command.ExecuteReader();
 
@@ -77,7 +77,7 @@ namespace Reminder.Storage.SqlServer.ADO
 				_nameOfTargetDate + "," +
 				_nameOfMessage + "," +
 				_nameOfStatusId +
-				" FROM [dbo].[ReminderItem]" +
+				" FROM [dbo].[VW_ReminderItem]" +
 				((status != null) ? (" WHERE " + _nameOfStatusId + "=@status") : string.Empty) +
 				" ORDER BY [ContactId], [TargetDate], [UpdatedDate], [Id] OFFSET @offset ROWS" +
 				((count > 0) ? " FETCH NEXT @count ROWS ONLY" : string.Empty);
@@ -128,9 +128,26 @@ namespace Reminder.Storage.SqlServer.ADO
 
 		public void UpdateStatus(Guid id, ReminderItemStatus status)
 		{
-			throw new NotImplementedException();
+			using var connection = GetOpenedSqlConnection();
+			var command = connection.CreateCommand();
+			command.CommandType = CommandType.Text;
+			command.CommandText = @"UPDATE [dbo].[VW_ReminderItem] SET [StatusId]=@statusId WHERE [Id]=@id";
+			command.Parameters.Add("@id", SqlDbType.UniqueIdentifier).Value = id;
+			command.Parameters.Add("@statusId", SqlDbType.TinyInt).Value = (byte)status;
+			command.ExecuteNonQuery();
 		}
 
+		private SqlConnection GetOpenedSqlConnection()
+		{
+			var sqlConnection = new SqlConnection(_connectionString);
+			sqlConnection.Open();
+			return sqlConnection;
+		}
+
+		private string TrimSquareBrackets(string s)
+		{
+			return s.Trim(new char[] { '[', ']' });
+		}
 
 		#region Temporarily out of scope
 
@@ -147,19 +164,5 @@ namespace Reminder.Storage.SqlServer.ADO
 		}
 
 		#endregion
-
-
-
-		private SqlConnection GetOpenedSqlConnection()
-		{
-			var sqlConnection = new SqlConnection(_connectionString);
-			sqlConnection.Open();
-			return sqlConnection;
-		}
-
-		private string TrimSquareBrackets(string s)
-		{
-			return s.Trim(new char[] { '[', ']' });
-		}
 	}
 }

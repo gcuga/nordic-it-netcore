@@ -1,0 +1,143 @@
+--CREATE DATABASE CorrespondenceHW
+--GO
+--USE CorrespondenceHW
+--GO
+
+---
+-- DROP CONSTRAINTS
+---
+ALTER TABLE dbo.Office
+	DROP CONSTRAINT IF EXISTS FK_Office_CityId
+GO
+ALTER TABLE dbo.Contractor
+	DROP CONSTRAINT IF EXISTS FK_Contractor_PositionId
+GO
+ALTER TABLE dbo.Sending
+	DROP CONSTRAINT IF EXISTS FK_Sending_SenderPassportNumber
+GO
+ALTER TABLE dbo.Sending
+	DROP CONSTRAINT IF EXISTS FK_Sending_SenderOfficeId
+GO
+ALTER TABLE dbo.Sending
+	DROP CONSTRAINT IF EXISTS FK_Sending_ReceiverPassportNumber
+GO
+ALTER TABLE dbo.Sending
+	DROP CONSTRAINT IF EXISTS FK_Sending_ReceiverOfficeId
+GO
+ALTER TABLE dbo.Sending
+	DROP CONSTRAINT IF EXISTS FK_Sending_PostalItemId
+GO
+ALTER TABLE dbo.Flow
+	DROP CONSTRAINT IF EXISTS FK_Flow_StatusId
+GO
+ALTER TABLE dbo.Flow
+	DROP CONSTRAINT IF EXISTS FK_Flow_SendingId
+GO
+
+---
+-- CREATE TABLES
+---
+DROP TABLE IF EXISTS dbo.Status
+GO
+CREATE TABLE dbo.Status (
+	Id INT NOT NULL,
+	Name VARCHAR(20) NOT NULL,
+	CONSTRAINT PK_Status PRIMARY KEY CLUSTERED (Id))
+GO
+DROP TABLE IF EXISTS dbo.Position
+GO
+CREATE TABLE dbo.Position (
+	Id INT NOT NULL,
+	Name VARCHAR(20) NOT NULL,
+	CONSTRAINT PK_Position PRIMARY KEY CLUSTERED (Id))
+GO
+DROP TABLE IF EXISTS dbo.Contractor
+GO
+CREATE TABLE dbo.Contractor (
+	PassportNumber VARCHAR(20) NOT NULL,
+	Name VARCHAR(250) NOT NULL,
+	PositionId INT NOT NULL,
+	CONSTRAINT PK_Contractor PRIMARY KEY CLUSTERED (PassportNumber))
+GO
+DROP TABLE IF EXISTS dbo.City
+GO
+CREATE TABLE dbo.City (
+	Id INT NOT NULL,
+	Name VARCHAR(250) NOT NULL,
+	CONSTRAINT PK_City PRIMARY KEY CLUSTERED (Id))
+GO
+DROP TABLE IF EXISTS dbo.Office
+GO
+CREATE TABLE dbo.Office (
+	Id INT NOT NULL,
+	CityId INT NOT NULL,
+	Address VARCHAR(250) NOT NULL,
+	CONSTRAINT PK_Office PRIMARY KEY CLUSTERED (Id))
+GO
+DROP TABLE IF EXISTS dbo.PostalItem
+GO
+CREATE TABLE dbo.PostalItem (
+	Id INT NOT NULL,
+	Name VARCHAR(250) NOT NULL,
+	NumberOfPages INT NOT NULL,
+	CONSTRAINT PK_PostalItem PRIMARY KEY CLUSTERED (Id))
+GO
+DROP TABLE IF EXISTS dbo.Sending
+GO
+CREATE TABLE dbo.Sending (
+	Id INT NOT NULL,
+	SenderPassportNumber VARCHAR(20) NOT NULL,
+	SenderOfficeId INT NOT NULL,
+	ReceiverPassportNumber VARCHAR(20) NOT NULL,
+	ReceiverOfficeId INT NOT NULL,
+	PostalItemId INT NOT NULL,
+	CONSTRAINT PK_Sending PRIMARY KEY CLUSTERED (Id))
+GO
+DROP TABLE IF EXISTS dbo.Flow
+GO
+CREATE TABLE dbo.Flow (
+	SendingId INT NOT NULL,
+	StatusId INT NOT NULL,
+	UpdateStatusDateTime DATETIMEOFFSET NOT NULL,
+	CONSTRAINT PK_Flow PRIMARY KEY CLUSTERED (SendingId, StatusId, UpdateStatusDateTime))
+GO
+
+---
+-- ADD CONSTRAINTS
+---
+ALTER TABLE dbo.Office
+	ADD CONSTRAINT FK_Office_CityId FOREIGN KEY (CityId)
+		REFERENCES dbo.City(Id)
+GO
+ALTER TABLE dbo.Contractor
+	ADD CONSTRAINT FK_Contractor_PositionId FOREIGN KEY (PositionId)
+		REFERENCES dbo.Position(Id)
+GO
+ALTER TABLE dbo.Sending
+	ADD CONSTRAINT FK_Sending_SenderPassportNumber FOREIGN KEY (SenderPassportNumber)
+		REFERENCES dbo.Contractor(PassportNumber)
+GO
+ALTER TABLE dbo.Sending
+	ADD CONSTRAINT FK_Sending_SenderOfficeId FOREIGN KEY (SenderOfficeId)
+		REFERENCES dbo.Office(Id)
+GO
+ALTER TABLE dbo.Sending
+	ADD CONSTRAINT FK_Sending_ReceiverPassportNumber FOREIGN KEY (ReceiverPassportNumber)
+		REFERENCES dbo.Contractor(PassportNumber)
+GO	
+ALTER TABLE dbo.Sending
+	ADD CONSTRAINT FK_Sending_ReceiverOfficeId FOREIGN KEY (ReceiverOfficeId)
+		REFERENCES dbo.Office(Id)
+GO
+ALTER TABLE dbo.Sending
+	ADD CONSTRAINT FK_Sending_PostalItemId FOREIGN KEY (PostalItemId)
+		REFERENCES dbo.PostalItem(Id)
+GO
+ALTER TABLE dbo.Flow
+	ADD CONSTRAINT FK_Flow_StatusId FOREIGN KEY (StatusId)
+		REFERENCES dbo.Status(Id)
+GO
+ALTER TABLE dbo.Flow
+	ADD CONSTRAINT FK_Flow_SendingId FOREIGN KEY (SendingId)
+		REFERENCES dbo.Sending(Id)
+GO
